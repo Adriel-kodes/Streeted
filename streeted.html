@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>STREETED - Streetwear From Ruiru</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+body { background: #111; color: white; font-family: Arial; text-align: center; margin: 0; padding-bottom: 80px; }
+h1 { color: gold; font-size: 32px; margin: 10px 0 5px 0; }
+.tagline { color: #aaa; font-size: 16px; margin-bottom: 10px; }
+.row { display: flex; gap: 10px; padding: 10px; flex-wrap: wrap; justify-content: center; }
+.product-box { flex: 1; min-width: 160px; max-width: 220px; background: #222; border-radius: 10px; padding: 10px; }
+.product-box img { width: 100%; height: 190px; object-fit: cover; display: block; border-radius: 10px; }
+.product-box h3 { font-size: 14px; margin: 10px 0 5px 0; }
+.price { margin: 8px 0; }
+.old-price { color: #888; font-size: 13px; text-decoration: line-through; }
+.new-price { color: gold; font-size: 19px; font-weight: bold; display: block; }
+.buy-btn { background: gold; color: black; border: none; font-weight: bold; padding: 11px; border-radius: 10px; margin-top: 5px; width: 100%; font-size: 13px; }
+.footer { padding: 15px; font-size: 13px; color: white; }
+#cart-box { position: fixed; bottom: 0; left: 0; right: 0; background: #000; padding: 12px; border-top: 2px solid gold; font-weight: bold; z-index: 999; font-size: 14px; }
+#cart-box button { background: #FFD700; border: none; padding: 8px 15px; font-weight: bold; border-radius: 8px; margin-left: 10px; }
+.nav { display: flex; justify-content: space-around; background: #1a1a1a; padding: 12px 5px; position: sticky; top: 0; z-index: 998; }
+.nav button { background: none; border: none; color: white; font-size: 13px; }
+.nav button.active { color: gold; font-weight: bold; }
+.nav i { font-size: 22px; display: block; margin-bottom: 3px; }
+.sizes { display: flex; gap: 5px; justify-content: center; margin: 8px 0; }
+.size-btn { background: #111; color: white; border: 1px solid #555; padding: 5px 10px; border-radius: 15px; font-size: 12px; }
+.size-btn.selected { background: gold; color: black; border-color: gold; font-weight: bold; }
+/* ===== ADDED ONLY - CART COLUMN + 45K + POCHI ===== */
+.level-box{margin:10px;background:#1a1a1a;padding:12px;border-radius:10px;border:1px solid #333;text-align:left}
+.bar{height:10px;background:#333;border-radius:10px;margin:8px 0;overflow:hidden}
+#level-fill{height:100%;width:0%;background:gold;transition:0.5s}
+#cart-drawer{position:fixed;top:0;right:-100%;width:92%;max-width:380px;height:100%;background:#111;z-index:1000;transition:0.3s;padding:15px;overflow-y:auto;border-left:2px solid gold;text-align:left}
+#cart-drawer.open{right:0}
+.cart-item{display:flex;gap:10px;background:#222;padding:10px;border-radius:10px;margin-bottom:10px;align-items:center}
+.cart-item img{width:60px;height:60px;object-fit:cover;border-radius:8px}
+.cart-item-info{flex:1}
+.qty{display:flex;align-items:center;gap:8px;margin-top:5px}
+.qty button{background:#444;color:white;border:none;width:24px;height:24px;border-radius:50%;cursor:pointer}
+.remove{color:#ff5555;background:none;border:none;font-size:12px;text-decoration:underline;cursor:pointer}
+.pay-btn{width:100%;background:#00A651;color:white;border:none;padding:13px;border-radius:10px;font-weight:900;margin-top:8px;cursor:pointer}
+.wa-btn{width:100%;background:#25D366;color:black;border:none;padding:12px;border-radius:10px;font-weight:bold;margin-top:8px;cursor:pointer}
+.close-btn{background:#333;color:white;border:none;padding:8px 12px;border-radius:8px;cursor:pointer}
+#mpesa-modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);justify-content:center;align-items:center;z-index:1100;padding:15px}
+.mpesa-card{background:#1a1a1a;padding:20px;border-radius:14px;width:100%;max-width:360px;text-align:center}
+.mpesa-card input{width:100%;padding:11px;margin:7px 0;border-radius:8px;border:1px solid #444;background:#111;color:white;box-sizing:border-box}
+</style>
+</head>
+<body>
+
+<img src="6.jpg" style="width: 250px; margin: 10px auto; display: block; border-radius: 15px;">
+<h1>STREETED</h1>
+<div class="tagline">Streetwear From Ruiru</div>
+
+<div class="nav">
+<button onclick="showCat('home', this)" class="active"><i class="fa-solid fa-house"></i>Home</button>
+<button onclick="showCat('tees', this)"><i class="fa-solid fa-shirt"></i>Tees</button>
+<button onclick="showCat('caps', this)"><i class="fa-solid fa-hat-cowboy"></i>Caps</button>
+<button onclick="showCat('hoodies', this)"><i class="fa-solid fa-shirt"></i>Hoodies</button>
+<button onclick="showCat('beanies', this)"><i class="fa-solid fa-hat-cowboy"></i>Beanies</button>
+</div>
+
+<!-- ===== ADDED ONLY - 45K LEVEL BAR (kept your Home/Nav unchanged) ===== -->
+<div class="level-box">
+<h3 style="color:gold;font-size:14px;margin:0">🏆 45K LEVEL - FREE DELIVERY + 5% OFF</h3>
+<div class="bar"><div id="level-fill"></div></div>
+<p id="level-text" style="font-size:12px;color:#ccc;margin:0">Add Ksh 45,000 to unlock 45K LEVEL</p>
+</div>
+
+<!-- ===== TEES SECTION ===== -->
+<div id="sec-tees" class="cat-section" data-sec="tees">
+<div class="row">
+<div class="product-box" data-cat="tees"><img src="t1.jpg"><h3>STREETED TEE</h3><div class="price"><span class="old-price">Ksh 2,999</span><span class="new-price">Ksh 2,300</span></div><div class="sizes"><button class="size-btn" onclick="pickSize(this)">S</button><button class="size-btn" onclick="pickSize(this)">M</button><button class="size-btn" onclick="pickSize(this)">L</button><button class="size-btn" onclick="pickSize(this)">XL</button></div><button class="buy-btn" onclick="addToCart('STREETED TEE - Size ' + getSize(this), 2300)">ADD TO CART</button></div>
+<div class="product-box" data-cat="tees"><img src="t2.jpg"><h3>STREETED TEE</h3><div class="price"><span class="old-price">Ksh 2,999</span><span class="new-price">Ksh 2,300</span></div><div class="sizes"><button class="size-btn" onclick="pickSize(this)">S</button><button class="size-btn" onclick="pickSize(this)">M</button><button class="size-btn" onclick="pickSize(this)">L</button><button class="size-btn" onclick="pickSize(this)">XL</button></div><button class="buy-btn" onclick="addToCart('STREETED TEE 2 - Size ' + getSize(this), 2300)">ADD TO CART</button></div>
+<div class="product-box" data-cat="tees"><img src="t3.jpg"><h3>STREETED TEE</h3><div class="price"><span class="old-price">Ksh 2,999</span><span class="new-price">Ksh 2,300</span></div><div class="sizes"><button class="size-btn" onclick="pickSize(this)">S</button><button class="size-btn" onclick="pickSize(this)">M</button><button class="size-btn" onclick="pickSize(this)">L</button><button class="size-btn" onclick="pickSize(this)">XL</button></div><button class="buy-btn" onclick="addToCart('STREETED TEE 3 - Size ' + getSize(this), 2300)">ADD TO CART</button></div>
+<div class="product-box" data-cat="tees"><img src="t4.jpg"><h3>STREETED TEE</h3><div class="price"><span class="old-price">Ksh 2,999</span><span class="new-price">Ksh 2,300</span></div><div class="sizes"><button class="size-btn" onclick="pickSize(this)">S</button><button class="size-btn" onclick="pickSize(this)">M</button><button class="size-btn" onclick="pickSize(this)">L</button><button class="size-btn" onclick="pickSize(this)">XL</button></div><button class="buy-btn" onclick="addToCart('STREETED TEE 4 - Size ' + getSize(this), 2300)">ADD TO CART</button></div>
+<div class="product-box" data-cat="tees"><img src="t5.jpg"><h3>STREETED TEE</h3><div class="price"><span class="old-price">Ksh 2,999</span><span class="new-price">Ksh 2,300</span></div><div class="sizes"><button class="size-btn" onclick="pickSize(this)">S</button><button class="size-btn" onclick="pickSize(this)">M</button><button class="size-btn" onclick="pickSize(this)">L</button><button class="size-btn" onclick="pickSize(this)">XL</button></div><button class="buy-btn" onclick="addToCart('STREETED TEE 5 - Size ' + getSize(this), 2300)">ADD TO CART</button></div>
+<div class="product-box" data-cat="tees"><img src="t6.jpg"><h3>STREETED TEE</h3><div class="price"><span class="old-price">Ksh 2,999</span><span class="new-price">Ksh 2,300</span></div><div class="sizes"><button class="size-btn" onclick="pickSize(this)">S</button><button class="size-btn" onclick="pickSize(this)">M</button><button class="size-btn" onclick="pickSize(this)">L</button><button class="size-btn" onclick="pickSize(this)">XL</button></div><button class="buy-btn" onclick="addToCart('STREETED TEE 6 - Size ' + getSize(this), 2300)">ADD TO CART</button></div>
+<div class="product-box" data-cat="tees"><img src="t7.jpg"><h3>STREETED TEE</h3><div class="price"><span class="old-price">Ksh 2,999</span><span class="new-price">Ksh 2,300</span></div><div class="sizes"><button class="size-btn" onclick="pickSize(this)">S</button><button class="size-btn" onclick="pickSize(this)">M</button><button class="size-btn" onclick="pickSize(this)">L</button><button class="size-btn" onclick="pickSize(this)">XL</button></div><button class="buy-btn" onclick="addToCart('STREETED TEE 7 - Size ' + getSize(this), 2300)">ADD TO CART</button></div>
+<div class="product-box" data-cat="tees"><img src="t8.jpg"><h3>STREETED TEE</h3><div class="price"><span class="old-price">Ksh 2,999</span><span class="new-price">Ksh 2,300</span></div><div class="sizes"><button class="size-btn" onclick="pickSize(this)">S</button><button class="size-btn" onclick="pickSize(this)">M</button><button class="size-btn" onclick="pickSize(this)">L</button><button class="size-btn" onclick="pickSize(this)">XL</button></div><button class="buy-btn" onclick="addToCart('STREETED TEE 8 - Size ' + getSize(this), 2300)">ADD TO CART</button></div>
+<div class="product-box" data-cat="tees"><img src="t9.jpg"><h3>STREETED TEE</h3><div class="price"><span class="old-price">Ksh 2,999</span><span class="new-price">Ksh 2,300</span></div><div class="sizes"><button class="size-btn" onclick="pickSize(this)">S</button><button class="size-btn" onclick="pickSize(this)">M</button><button class="size-btn" onclick="pickSize(this)">L</button><button class="size-btn" onclick="pickSize(this)">XL</button></div><button class="buy-btn" onclick="addToCart('STREETED TEE 9 - Size ' + getSize(this), 2300)">ADD TO CART</button></div>
+<div class="product-box" data-cat="tees"><img src="t10.jpg"><h3>STREETED TEE</h3><div class="price"><span class="old-price">Ksh 2,999</span><span class="new-price">Ksh 2,300</span></div><div class="sizes"><button class="size-btn" onclick="pickSize(this)">S</button><button class="size-btn" onclick="pickSize(this)">M</button><button class="size-btn" onclick="pickSize(this)">L</button><button class="size-btn" onclick="pickSize(this)">XL</button></div><button class="buy-btn" onclick="addToCart('STREETED TEE 10 - Size ' + getSize(this), 2300)">ADD TO CART</button></div>
+</div>
+</div>
+
+<!-- ===== CAPS SECTION ===== -->
+<div id="sec-caps" class="cat-section" data-sec="caps">
+<div class="row">
+<div class="product-box" data-cat="caps"><img src="c1.jpg"><h3>STREETED CAP</h3><div class="price"><span class="old-price">Ksh 1,999</span><span class="new-price">Ksh 1,500</span></div><div class="sizes"><button class="size-btn" onclick="pickSize(this)">Free Size</button></div><button class="buy-btn" onclick="addToCart('STREETED CAP', 1500)">ADD TO CART</button></div>
+<div class="product-box" data-cat="caps"><img src="c2.jpg"><h3>STREETED CAP</h3><div class="price"><span class="old-price">Ksh 1,999</span><span class="new-price">Ksh 1,500</span></div><div class="sizes"><button class="size-btn" onclick="pickSize(this)">Free Size</button></div><button class="buy-btn" onclick="addToCart('STREETED CAP 2', 1500)">ADD TO CART</button></div>
+<div class="product-box" data-cat="caps"><img src="c3.jpg"><h3>STREETED CAP</h3><div class="price"><span class="old-price">Ksh 1,999</span><span class="new-price">Ksh 1,500</span></div><div class="sizes"><button class="size-btn" onclick="pickSize(this)">Free Size</button></div><button class="buy-btn" onclick="addToCart('STREETED CAP 3', 1500)">ADD TO CART</button></div>
+<div class="product-box" data-cat="caps"><img src="c4.jpg"><h3>STREETED CAP</h3><div class="price"><span class="old-price">Ksh 1,999</span><span class="new-price">Ksh 1,500</span></div><div class="sizes"><button class="size-btn" onclick="pickSize(this)">Free Size</button></div><button class="buy-btn" onclick="addToCart('STREETED CAP 4', 1500)">ADD TO CART</button></div>
+<div class="product-box" data-cat="caps"><img src="c5.jpg"><h3>STREETED CAP</h3><div class="price"><span class="old-price">Ksh 1,999</span><span class="new-price">Ksh 1,500</span></div><div class="sizes"><button class="size-btn" onclick="pickSize(this)">Free Size</button></div><button class="buy-btn" onclick="addToCart('STREETED CAP 5', 1500)">ADD TO CART</button></div>
+<div class="product-box" data-cat="caps"><img src="c6.jpg"><h3>STREETED CAP</h3><div class="price"><span class="old-price">Ksh 1,999</span><span class="new-price">Ksh 1,500</span></div><div class="sizes"><button class="size-btn" onclick="pickSize(this)">Free Size</button></div><button class="buy-btn" onclick="addToCart('STREETED CAP 6', 1500)">ADD TO CART</button></div>
+<div class="product-box" data-cat="caps"><img src="c7.jpg"><h3>STREETED CAP</h3><div class="price"><span class="old-price">Ksh 1,999</span><span class="new-price">Ksh 1,500</span></div><div class="sizes"><button class="size-btn" onclick="pickSize(this)">Free Size</button></div><button class="buy-btn" onclick="addToCart('STREETED CAP 7', 1500)">ADD TO CART</button></div>
+<div class="product-box" data-cat="caps"><img src="c8.jpg"><h3>STREETED CAP</h3><div class="price"><span class="old-price">Ksh 1,999</span><span class="new-price">Ksh 1,500</span></div><div class="sizes"><button class="size-btn" onclick="pickSize(this)">Free Size</button></div><button class="buy-btn" onclick="addToCart('STREETED CAP 8', 1500)">ADD TO CART</button></div>
+<div class="product-box" data-cat="caps"><img src="c9.jpg"><h3>STREETED CAP</h3><div class="price"><span class="old-price">Ksh 1,999</span><span class="new-price">Ksh 1,500</span></div><div class="sizes"><button class="size-btn" onclick="pickSize(this)">Free Size</button></div><button class="buy-btn" onclick="addToCart('STREETED CAP 9', 1500)">ADD TO CART</button></div>
+<div class="product-box" data-cat="caps"><img src="c10.jpg"><h3>STREETED CAP</h3><div class="price"><span class="old-price">Ksh 1,999</span><span class="new-price">Ksh 1,500</span></div><div class="sizes"><button class="size-btn" onclick="pickSize(this)">Free Size</button></div><button class="buy-btn" onclick="addToCart('STREETED CAP 10', 1500)">ADD TO CART</button></div>
+</div>
+</div>
+
+<!-- ===== HOODIES SECTION ===== -->
+<div id="sec-hoodies" class="cat-section" data-sec="hoodies">
+<div class="row">
+<div class="product-box" data-cat="hoodies"><img src="h1.jpg"><h3>STREETED HOODIE</h3><div class="price"><span class="old-price">Ksh 6,100</span><span class="new-price">Ksh 4,500</span></div><div class="sizes"><button class="size-btn" onclick="pickSize(this)">S</button><button class="size-btn" onclick="pickSize(this)">M</button><button class="size-btn" onclick="pickSize(this)">L</button><button class="size-btn" onclick="pickSize(this)">XL</button></div><button class="buy-btn" onclick="addToCart('STREETED HOODIE - Size ' + getSize(this), 4500)">ADD TO CART</button></div>
+<div class="product-box" data-cat="hoodies"><img src="h2.jpg"><h3>STREETED HOODIE</h3><div class="price"><span class="old-price">Ksh 6,100</span><span class="new-price">Ksh 4,500</span></div><div class="sizes"><button class="size-btn" onclick="pickSize(this)">S</button><button class="size-btn" onclick="pickSize(this)">M</button><button class="size-btn" onclick="pickSize(this)">L</button><button class="size-btn" onclick="pickSize(this)">XL</button></div><button class="buy-btn" onclick="addToCart('STREETED HOODIE 2 - Size ' + getSize(this), 4500)">ADD TO CART</button></div>
+<div class="product-box" data-cat="hoodies"><img src="h3.jpg"><h3>STREETED HOODIE</h3><div class="price"><span class="old-price">Ksh 6,100</span><span class="new-price">Ksh 4,500</span></div><div class="sizes"><button class="size-btn" onclick="pickSize(this)">S</button><button class="size-btn" onclick="pickSize(this)">M</button><button class="size-btn" onclick="pickSize(this)">L</button><button class="size-btn" onclick="pickSize(this)">XL</button></div><button class="buy-btn" onclick="addToCart('STREETED HOODIE 3 - Size ' + getSize(this), 4500)">ADD TO CART</button></div>
+<div class="product-box" data-cat="hoodies"><img src="h4.jpg"><h3>STREETED HOODIE</h3><div class="price"><span class="old-price">Ksh 6,100</span><span class="new-price">Ksh 4,500</span></div><div class="sizes"><button class="size-btn" onclick="pickSize(this)">S</button><button class="size-btn" onclick="pickSize(this)">M</button><button class="size-btn" onclick="pickSize(this)">L</button><button class="size-btn" onclick="pickSize(this)">XL</button></div><button class="buy-btn" onclick="addToCart('STREETED HOODIE 4 - Size ' + getSize(this), 4500)">ADD TO CART</button></div>
+<div class="product-box" data-cat="hoodies"><img src="h5.jpg"><h3>STREETED HOODIE</h3><div class="price"><span class="old-price">Ksh 6,100</span><span class="new-price">Ksh 4,500</span></div><div class="sizes"><button class="size-btn" onclick="pickSize(this)">S</button><button class="size-btn" onclick="pickSize(this)">M</button><button class="size-btn" onclick="pickSize(this)">L</button><button class="size-btn" onclick="pickSize(this)">XL</button></div><button class="buy-btn" onclick="addToCart('STREETED HOODIE 5 - Size ' + getSize(this), 4500)">ADD TO CART</button></div>
+<div class="product-box" data-cat="hoodies"><img src="h6.jpg"><h3>STREETED HOODIE</h3><div class="price"><span class="old-price">Ksh 6,100</span><span class="new-price">Ksh 4,500</span></div><div class="sizes"><button class="size-btn" onclick="pickSize(this)">S</button><button class="size-btn" onclick="pickSize(this)">M</button><button class="size-btn" onclick="pickSize(this)">L</button><button class="size-btn" onclick="pickSize(this)">XL</button></div><button class="buy-btn" onclick="addToCart('STREETED HOODIE 6 - Size ' + getSize(this), 4500)">ADD TO CART</button></div>
+<div class="product-box" data-cat="hoodies"><img src="h7.jpg"><h3>STREETED HOODIE</h3><div class="price"><span class="old-price">Ksh 6,100</span><span class="new-price">Ksh 4,500</span></div><div class="sizes"><button class="size-btn" onclick="pickSize(this)">S</button><button class="size-btn" onclick="pickSize(this)">M</button><button class="size-btn" onclick="pickSize(this)">L</button><button class="size-btn" onclick="pickSize(this)">XL</button></div><button class="buy-btn" onclick="addToCart('STREETED HOODIE 7 - Size ' + getSize(this), 4500)">ADD TO CART</button></div>
+<div class="product-box" data-cat="hoodies"><img src="h8.jpg"><h3>STREETED HOODIE</h3><div class="price"><span class="old-price">Ksh 6,100</span><span class="new-price">Ksh 4,500</span></div><div class="sizes"><button class="size-btn" onclick="pickSize(this)">S</button><button class="size-btn" onclick="pickSize(this)">M</button><button class="size-btn" onclick="pickSize(this)">L</button><button class="size-btn" onclick="pickSize(this)">XL</button></div><button class="buy-btn" onclick="addToCart('STREETED HOODIE 8 - Size ' + getSize(this), 4500)">ADD TO CART</button></div>
+<div class="product-box" data-cat="hoodies"><img src="h9.jpg"><h3>STREETED HOODIE</h3><div class="price"><span class="old-price">Ksh 6,100</span><span class="new-price">Ksh 4,500</span></div><div class="sizes"><button class="size-btn" onclick="pickSize(this)">S</button><button class="size-btn" onclick="pickSize(this)">M</button><button class="size-btn" onclick="pickSize(this)">L</button><button class="size-btn" onclick="pickSize(this)">XL</button></div><button class="buy-btn" onclick="addToCart('STREETED HOODIE 9 - Size ' + getSize(this), 4500)">ADD TO CART</button></div>
+<div class="product-box" data-cat="hoodies"><img src="h10.jpg"><h3>STREETED HOODIE</h3><div class="price"><span class="old-price">Ksh 6,100</span><span class="new-price">Ksh 4,500</span></div><div class="sizes"><button class="size-btn" onclick="pickSize(this)">S</button><button class="size-btn" onclick="pickSize(this)">M</button><button class="size-btn" onclick="pickSize(this)">L</button><button class="size-btn" onclick="pickSize(this)">XL</button></div><button class="buy-btn" onclick="addToCart('STREETED HOODIE 10 - Size ' + getSize(this), 4500)">ADD TO CART</button></div>
+</div>
+</div>
+
+<!-- ===== BEANIES SECTION ===== -->
+<div id="sec-beanies" class="cat-section" data-sec="beanies">
+<div class="row">
+<div class="product-box" data-cat="beanies"><img src="b1.jpg"><h3>STREETED BEANIE</h3><div class="price"><span class="old-price">Ksh 899</span><span class="new-price">Ksh 650</span></div><div class="sizes"><button class="size-btn" onclick="pickSize(this)">Free Size</button></div><button class="buy-btn" onclick="addToCart('STREETED BEANIE', 650)">ADD TO CART</button></div>
+<div class="product-box" data-cat="beanies"><img src="b2.jpg"><h3>STREETED BEANIE</h3><div class="price"><span class="old-price">Ksh 899</span><span class="new-price">Ksh 650</span></div><div class="sizes"><button class="size-btn" onclick="pickSize(this)">Free Size</button></div><button class="buy-btn" onclick="addToCart('STREETED BEANIE 2', 650)">ADD TO CART</button></div>
+<div class="product-box" data-cat="beanies"><img src="b3.jpg"><h3>STREETED BEANIE</h3><div class="price"><span class="old-price">Ksh 899</span><span class="new-price">Ksh 650</span></div><div class="sizes"><button class="size-btn" onclick="pickSize(this)">Free Size</button></div><button class="buy-btn" onclick="addToCart('STREETED BEANIE 3', 650)">ADD TO CART</button></div>
+<div class="product-box" data-cat="beanies"><img src="b4.jpg"><h3>STREETED BEANIE</h3><div class="price"><span class="old-price">Ksh 899</span><span class="new-price">Ksh 650</span></div><div class="sizes"><button class="size-btn" onclick="pickSize(this)">Free Size</button></div><button class="buy-btn" onclick="addToCart('STREETED BEANIE 4', 650)">ADD TO CART</button></div>
+<div class="product-box" data-cat="beanies"><img src="b5.jpg"><h3>STREETED BEANIE</h3><div class="price"><span class="old-price">Ksh 899</span><span class="new-price">Ksh 650</span></div><div class="sizes"><button class="size-btn" onclick="pickSize(this)">Free Size</button></div><button class="buy-btn" onclick="addToCart('STREETED BEANIE 5', 650)">ADD TO CART</button></div>
+<div class="product-box" data-cat="beanies"><img src="b6.jpg"><h3>STREETED BEANIE</h3><div class="price"><span class="old-price">Ksh 899</span><span class="new-price">Ksh 650</span></div><div class="sizes"><button class="size-btn" onclick="pickSize(this)">Free Size</button></div><button class="buy-btn" onclick="addToCart('STREETED BEANIE 6', 650)">ADD TO CART</button></div>
+<div class="product-box" data-cat="beanies"><img src="b7.jpg"><h3>STREETED BEANIE</h3><div class="price"><span class="old-price">Ksh 899</span><span class="new-price">Ksh 650</span></div><div class="sizes"><button class="size-btn" onclick="pickSize(this)">Free Size</button></div><button class="buy-btn" onclick="addToCart('STREETED BEANIE 7', 650)">ADD TO CART</button></div>
+<div class="product-box" data-cat="beanies"><img src="b8.jpg"><h3>STREETED BEANIE</h3><div class="price"><span class="old-price">Ksh 899</span><span class="new-price">Ksh 650</span></div><div class="sizes"><button class="size-btn" onclick="pickSize(this)">Free Size</button></div><button class="buy-btn" onclick="addToCart('STREETED BEANIE 8', 650)">ADD TO CART</button></div>
+<div class="product-box" data-cat="beanies"><img src="b9.jpg"><h3>STREETED BEANIE</h3><div class="price"><span class="old-price">Ksh 899</span><span class="new-price">Ksh 650</span></div><div class="sizes"><button class="size-btn" onclick="pickSize(this)">Free Size</button></div><button class="buy-btn" onclick="addToCart('STREETED BEANIE 9', 650)">ADD TO CART</button></div>
+<div class="product-box" data-cat="beanies"><img src="b10.jpg"><h3>STREETED BEANIE</h3><div class="price"><span class="old-price">Ksh 899</span><span class="new-price">Ksh 650</span></div><div class="sizes"><button class="size-btn" onclick="pickSize(this)">Free Size</button></div><button class="buy-btn" onclick="addToCart('STREETED BEANIE 10', 650)">ADD TO CART</button></div>
+</div>
+</div>
+
+<div class="footer">
+<p>Made in the streets. Worn with everywhere</p>
+<p>Pay via M-Pesa | Delivery country wide</p>
+<p>© 2026. ALL Rights Reserved</p>
+</div>
+
+<!-- ===== ADDED ONLY - CART COLUMN (before </body>) ===== -->
+<div id="cart-drawer">
+<div style="display:flex;justify-content:space-between;align-items:center"><h2 style="margin:0">Your Cart</h2><button class="close-btn" onclick="toggleCart(false)">✕ Close</button></div>
+<p style="font-size:12px;color:#aaa">View / + / - / Remove here</p>
+<div id="cart-items"></div>
+<div style="background:#000;padding:12px;border-radius:10px;margin-top:10px">
+<p style="display:flex;justify-content:space-between;margin:4px 0"><span>Subtotal:</span><span>Ksh <span id="subtotal">0</span></span></p>
+<p style="display:flex;justify-content:space-between;margin:4px 0"><span>Discount (45K):</span><span style="color:gold">- Ksh <span id="discount">0</span></span></p>
+<p style="display:flex;justify-content:space-between;margin:4px 0"><span>Delivery:</span><span id="delivery">Ksh 300</span></p>
+<p style="display:flex;justify-content:space-between;font-size:18px;color:gold;font-weight:900"><span>Total:</span><span>Ksh <span id="cart-total2">0</span></span></p>
+<p id="level-msg" style="color:gold;font-size:12px"></p>
+</div>
+<button class="pay-btn" onclick="openMpesa()">PAY WITH M-PESA POCHI</button>
+<button class="wa-btn" onclick="checkout()">ORDER VIA WHATSAPP</button>
+<button class="close-btn" style="width:100%;margin-top:8px" onclick="toggleCart(false)">Continue Shopping</button>
+</div>
+
+<!-- ===== ADDED ONLY - POCHI MODAL ===== -->
+<div id="mpesa-modal"><div class="mpesa-card">
+<h3 style="color:gold">M-PESA PAYMENT - POCHI</h3>
+<p>Total to Pay: <b>Ksh <span id="mpesa-total">0</span></b></p>
+<p style="background:#111;padding:10px;border-radius:8px;line-height:1.7;text-align:left;font-size:14px">1. Go to M-Pesa > <b>Send Money</b><br>2. Phone: <b style="color:gold;font-size:18px">0113500883</b><br>3. Name: <b>STREETED</b><br>4. Enter amount & PIN<br>5. Copy the M-Pesa code</p>
+<input type="text" id="mpesa-code" placeholder="Enter M-Pesa Code e.g. QK12345678">
+<input type="text" id="mpesa-phone" placeholder="Your Phone e.g. 0726791551">
+<button class="pay-btn" onclick="confirmMpesa()">I HAVE PAID - CONFIRM</button>
+<button class="close-btn" style="width:100%;margin-top:8px" onclick="closeMpesa()">CANCEL</button>
+</div></div>
+
+<div id="cart-box">
+Cart: <span id="cart-count">0</span> items | Total: Ksh <span id="cart-total">0</span>
+<button onclick="toggleCart(true)">VIEW CART</button>
+<button onclick="checkout()">CHECKOUT ON WHATSAPP</button>
+</div>
+
+<script>
+let cart = [];
+// UPDATED ONLY - now groups same item, supports qty + remove + 45K
+function addToCart(name, price) {
+  let found = cart.find(i => i.name === name);
+  if(found){ found.qty++; } else { cart.push({name: name, price: price, qty: 1}); }
+  updateCart();
+  toggleCart(true);
+}
+function changeQty(name, delta){
+  let f = cart.find(i => i.name === name);
+  if(!f) return;
+  f.qty += delta;
+  if(f.qty <= 0) removeItem(name);
+  else updateCart();
+}
+function removeItem(name){
+  cart = cart.filter(i => i.name !== name);
+  updateCart();
+}
+function updateCart(){
+  let box = document.getElementById('cart-items');
+  box.innerHTML = '';
+  let sub = 0; let count = 0;
+  cart.forEach(item => {
+    sub += item.price * item.qty; count += item.qty;
+    box.innerHTML += '<div class="cart-item"><div class="cart-item-info"><b>'+item.name+'</b><div>Ksh '+item.price+' x '+item.qty+' = <b>Ksh '+(item.price*item.qty)+'</b></div><div class="qty"><button onclick="changeQty(\''+item.name.replace(/'/g,"\\'")+'\',-1)">-</button><span>'+item.qty+'</span><button onclick="changeQty(\''+item.name.replace(/'/g,"\\'")+'\',1)">+</button><button class="remove" onclick="removeItem(\''+item.name.replace(/'/g,"\\'")+'\')">Remove ✕</button></div></div></div>';
+  });
+  if(cart.length===0) box.innerHTML = '<p style="text-align:center;color:#888;padding:20px">Cart is empty.<br>Add a Tee, Cap, Hoodie or Beanie.</p>';
+  let is45 = sub >= 45000;
+  let discount = is45 ? Math.round(sub*0.05) : 0;
+  let delivery = cart.length===0 ? 0 : (is45 ? 0 : 300);
+  let total = sub - discount + delivery;
+  document.getElementById('cart-count').innerText = count;
+  document.getElementById('cart-total').innerText = total.toLocaleString();
+  document.getElementById('subtotal').innerText = sub.toLocaleString();
+  document.getElementById('discount').innerText = discount.toLocaleString();
+  document.getElementById('delivery').innerText = (delivery===0 && cart.length>0) ? 'FREE' : 'Ksh '+delivery;
+  document.getElementById('cart-total2').innerText = total.toLocaleString();
+  let pct = Math.min(100, Math.round(sub/45000*100));
+  document.getElementById('level-fill').style.width = pct + '%';
+  document.getElementById('level-text').innerText = is45 ? '✅ 45K LEVEL UNLOCKED! Free Delivery + 5% OFF applied' : 'Ksh '+(45000-sub).toLocaleString()+' more to unlock 45K LEVEL ('+pct+'%)';
+  document.getElementById('level-msg').innerText = is45 ? '🏆 45K LEVEL: You saved Ksh '+discount.toLocaleString()+' + Free Delivery' : '';
+}
+// ADDED ONLY - toggle + pochi
+function toggleCart(open){ document.getElementById('cart-drawer').classList.toggle('open', open); }
+function openMpesa(){ if(cart.length===0){alert('Cart is empty!');return;} document.getElementById('mpesa-total').innerText = document.getElementById('cart-total').innerText; document.getElementById('mpesa-modal').style.display='flex'; toggleCart(false); }
+function closeMpesa(){ document.getElementById('mpesa-modal').style.display='none'; }
+function confirmMpesa(){
+  let code = document.getElementById('mpesa-code').value.trim();
+  let phone = document.getElementById('mpesa-phone').value.trim();
+  if(!code || !phone){ alert('Enter M-Pesa code and phone!'); return; }
+  let msg = 'Hi STREETED, I PAID via M-PESA POCHI\nTo: 0113500883\nCode: ' + code + '\nMy Phone: ' + phone + '\nOrder:\n';
+  cart.forEach(item => msg += '- ' + item.name + ' x' + item.qty + ' - Ksh ' + (item.price*item.qty) + '\n');
+  msg += 'Total: Ksh ' + document.getElementById('cart-total').innerText;
+  window.open('https://wa.me/254726791551?text=' + encodeURIComponent(msg), '_blank');
+  cart = []; updateCart(); closeMpesa();
+}
+function pickSize(btn) {
+  let box = btn.closest('.product-box');
+  box.querySelectorAll('.size-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+function getSize(addBtn) {
+  let box = addBtn.closest('.product-box');
+  let sel = box.querySelector('.size-btn.selected');
+  return sel ? sel.innerText : 'M';
+}
+function showCat(cat, btn) {
+  document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  document.querySelectorAll('.cat-section').forEach(sec => {
+    if(cat === 'home' || sec.getAttribute('data-sec') === cat) {
+      sec.style.display = 'block';
+    } else {
+      sec.style.display = 'none';
+    }
+  });
+  if(cat !== 'home') {
+    let target = document.getElementById('sec-' + cat);
+    if(target) target.scrollIntoView({behavior: 'smooth'});
+  } else {
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  }
+}
+function checkout() {
+  if(cart.length === 0) { alert('Cart is empty!'); return; }
+  let msg = 'Hi STREETED, I want to order:\n';
+  cart.forEach(item => msg += '- ' + item.name + ' x' + item.qty + ' - Ksh ' + (item.price*item.qty) + '\n');
+  let total = document.getElementById('cart-total').innerText;
+  msg += 'Total: Ksh ' + total;
+  let url = 'https://wa.me/254726791551?text=' + encodeURIComponent(msg);
+  window.open(url, '_blank');
+}
+updateCart();
+</script>
+  
+</body>
+</html>
