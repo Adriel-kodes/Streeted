@@ -8,8 +8,20 @@
 body { background: #111; color: white; font-family: Arial; text-align: center; margin: 0; padding-bottom: 80px; }
 h1 { color: gold; font-size: 32px; margin: 10px 0 5px 0; }
 .tagline { color: #aaa; font-size: 16px; margin-bottom: 10px; }
-.row { display: flex; gap: 10px; padding: 10px; flex-wrap: wrap; justify-content: center; }
-.product-box { flex: 1; min-width: 160px; max-width: 220px; background: #222; border-radius: 10px; padding: 10px; }
+* { box-sizing: border-box; }
+.row {
+  display: flex;
+  gap: 10px;
+  padding: 10px;
+  flex-wrap: wrap;
+}
+.product-box {
+  flex:1 1 calc(50% - 5px);
+  min-width: 0;
+  max-with: none;
+  background: #222
+  border-radius: 10px;
+}
 .product-box img { width: 100%; height: 190px; object-fit: cover; display: block; border-radius: 10px; }
 .product-box h3 { font-size: 14px; margin: 10px 0 5px 0; }
 .price { margin: 8px 0; }
